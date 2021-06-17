@@ -31,16 +31,16 @@ defmodule ElonBot.NewTweetSquawk do
   end
 
   defp add_and_check_for_new_tweets(tweets, first_run?) do
-    case TweetStore.add_new(tweets) do
-      [] ->
-        if first_run? do
-          [latest_tweet | _] = TweetStore.all()
+    with tweets when tweets !== [] <- TweetStore.add_new(tweets) do
+      if first_run? do
+        [latest_tweet | _] = tweets
 
-          send_tweet_message_to_discord(latest_tweet)
-        end
-
-      new_tweets ->
-        Enum.map(new_tweets, &send_tweet_message_to_discord/1)
+        send_tweet_message_to_discord(latest_tweet)
+      else
+        tweets
+          |> TweetStore.sort_by_creation(:asc)
+          |> Enum.map(&send_tweet_message_to_discord/1)
+      end
     end
   end
 

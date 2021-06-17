@@ -22,7 +22,7 @@ defmodule ElonBot.TweetStore do
         [latest_tweet | _] ->
           latest_tweets = reject_tweets_before(new_tweets, latest_tweet.created_at)
 
-          Logger.debug("Found #{length(latest_tweets)} new tweets, inserting...")
+          Logger.debug("Found #{length(latest_tweets)} new tweets")
 
           latest_tweets
       end
@@ -39,7 +39,7 @@ defmodule ElonBot.TweetStore do
     Agent.get(server, &sort_by_creation/1)
   end
 
-  defp sort_by_creation(tweets) do
-    Enum.sort_by(tweets, &(&1.created_at), :desc)
+  def sort_by_creation(tweets, direction \\ :desc) do
+    Enum.sort_by(tweets, &(&1.created_at), direction)
   end
 end
