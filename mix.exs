@@ -7,7 +7,15 @@ defmodule ElonBot.MixProject do
       version: "0.1.0",
       elixir: "~> 1.10",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+      default_release: :elon_bot,
+      releases: [
+        elon_bot: [
+          include_executables_for: [:unix],
+          steps: [:assemble, :tar],
+          applications: [elon_bot: :permanent, runtime_tools: :permanent]
+        ]
+      ]
     ]
   end
 
