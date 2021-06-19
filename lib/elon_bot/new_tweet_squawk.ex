@@ -54,7 +54,7 @@ defmodule ElonBot.NewTweetSquawk do
   end
 
   defp send_tweet_message_to_discord(tweet) do
-    tweet |> format_tweet() |> Discord.post_in_channel
+    tweet |> format_tweet() |> Discord.post_in_all_channels
   end
 
   defp format_tweet(%{text: text, created_at: created_at}) do
