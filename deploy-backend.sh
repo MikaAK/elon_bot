@@ -10,7 +10,7 @@ ECR_REPO=$ECR_URL/$DOCKER_IMAGE
 
 function active-tasks() {
   aws ecs list-tasks \
-    --profile $USER \
+    --profile=$USER \
     --cluster=$CLUSTER \
     --region=$REGION \
   | pcregrep -Mo ": \[\K[^]]*" \
@@ -29,7 +29,7 @@ function stop-active-tasks() {
   for TASK in $ACTIVE_TASKS
   do
     aws ecs stop-task \
-      --profile $USER \
+      --profile=$USER \
       --cluster=$CLUSTER \
       --region=$REGION \
       --task=$TASK > /dev/null
@@ -39,7 +39,7 @@ function stop-active-tasks() {
 function update-service-with-new-deployment() {
   echo "Deploying $SERVICE in $REGION on $CLUSTER..."
   aws ecs update-service \
-    --profile $USER \
+    --profile=$USER \
     --region=$REGION \
     --cluster=$CLUSTER \
     --service=$SERVICE \
@@ -50,7 +50,7 @@ function update-service-with-new-deployment() {
 function build-docker-image() {
   docker build -t $DOCKER_IMAGE -f Dockerfile . &&
   docker tag $DOCKER_IMAGE:latest $ECR_REPO:latest &&
-  aws ecr get-login-password --region $REGION | docker login --username $USER --password-stdin $ECR_URL &&
+  aws ecr get-login-password --region $REGION --profile $USER | docker login --username AWS --password-stdin $ECR_URL &&
   docker push $ECR_REPO:latest
 }
 
