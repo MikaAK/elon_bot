@@ -58,7 +58,7 @@ defmodule ElonBot.NewTweetSquawk do
   end
 
   defp format_tweet(%{text: text, created_at: created_at}) do
-    "#{Calendar.strftime(created_at, "%a, %B %d %Y")} - #{text}"
+    "#{Calendar.strftime(created_at, "%a, %B %d %Y")} - #{HtmlEntities.decode(text)}"
   end
 
   defp format_attachments(attachments) do

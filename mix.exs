@@ -31,7 +31,8 @@ defmodule ElonBot.MixProject do
   defp deps do
     [
       {:finch, "~> 0.6"},
-      {:jason, "~> 1.2"}
+      {:jason, "~> 1.2"},
+      {:html_entities, "~> 0.5"}
     ]
   end
 end
