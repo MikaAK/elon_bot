@@ -1,5 +1,5 @@
 defmodule ElonBot.NewTweetSquawk do
-  use Task
+  use Task, restart: :permanent
 
   alias ElonBot.{Discord, TweetStore}
 

@@ -1,4 +1,6 @@
 defmodule ElonBot.Twitter do
+  require Logger
+
   @headers [{"Authorization", "Bearer #{ElonBot.Config.twitter_bearer_token()}"}]
 
   def load_user(user_name) do
@@ -28,6 +30,8 @@ defmodule ElonBot.Twitter do
 
   defp handle_response({:ok, %Finch.Response{status: 200, body: body}}) do
     data = case Jason.decode!(body) do
+      %{"meta" => %{"result_count" => 0}} -> %{}
+
       %{"data" => data, "includes" => %{"media" => media_items}} ->
         media_item_group_map = group_media_items_by_id(media_items)
 
@@ -37,6 +41,16 @@ defmodule ElonBot.Twitter do
     end
 
     {:ok, data |> atomize_keys() |> deserialize_created_at}
+  end
+
+  defp handle_response({:error, %Mint.TransportError{reason: :closed}}) do
+    Logger.debug("Mint connection closed")
+
+    {:ok, []}
+  end
+
+  defp handle_response({_, res}) do
+    {:error, "Cannot handle response: #{inspect res}"}
   end
 
   defp group_media_items_by_id(media_items) do
